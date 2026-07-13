@@ -6,6 +6,9 @@ import { getPayload } from 'payload'
 
 import config from './payload.config'
 
+// Seed data must never trigger Payload's development schema-push flow.
+process.env.PAYLOAD_MIGRATING = 'true'
+
 type PrototypeSpeaker = {
   id: string
   name: string
