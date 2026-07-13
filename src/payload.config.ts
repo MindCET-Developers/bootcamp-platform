@@ -20,6 +20,11 @@ import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const databaseURL = process.env.DATABASE_URL || ''
+const connectionString =
+  databaseURL.includes('pooler.supabase.com') && !databaseURL.includes('uselibpqcompat=true')
+    ? `${databaseURL}${databaseURL.includes('?') ? '&' : '?'}uselibpqcompat=true`
+    : databaseURL
 
 export default buildConfig({
   admin: {
@@ -53,7 +58,7 @@ export default buildConfig({
   db: postgresAdapter({
     prodMigrations: migrations,
     pool: {
-      connectionString: process.env.DATABASE_URL || '',
+      connectionString,
     },
   }),
   sharp,
