@@ -1,0 +1,60 @@
+/* Seoul Signal: restrained wayfinding, not decorative neon. */
+:root[data-theme='dark'] {
+  --theme-bg: #090c12;
+  --theme-input-bg: #10151e;
+  --theme-text: #edf2f2;
+  --theme-elevation-0: #090c12;
+  --theme-elevation-50: #0d1118;
+  --theme-elevation-100: #10151e;
+  --theme-elevation-150: #141a23;
+  --theme-elevation-200: #171e29;
+  --theme-elevation-250: #1d2530;
+  --theme-elevation-300: #232c37;
+  --theme-elevation-400: #34414d;
+  --theme-elevation-500: #65717b;
+  --theme-elevation-600: #9da8ad;
+  --theme-elevation-700: #c7d0d2;
+  --theme-elevation-800: #dce4e5;
+  --theme-elevation-900: #edf2f2;
+  --theme-elevation-1000: #ffffff;
+}
+
+.nav {
+  border-right: 1px solid #2b343f;
+}
+
+.nav__brand {
+  border-bottom: 1px solid #2b343f;
+}
+
+.nav-group__label {
+  color: #65d5df;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.btn--style-primary {
+  background: #65d5df;
+  border-radius: 3px;
+  color: #090c12;
+}
+
+.btn--style-primary:hover {
+  background: #86e0e7;
+}
+
+.card,
+.collection-list__wrap,
+.render-fields > .field-type {
+  border-radius: 5px;
+}
+
+.dashboard__label::before {
+  background: #ef4ca6;
+  content: '';
+  display: inline-block;
+  height: 7px;
+  margin-right: 9px;
+  width: 7px;
+}

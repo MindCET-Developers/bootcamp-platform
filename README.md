@@ -1,67 +1,90 @@
-# Payload Blank Template
+# MindCET Bootcamp Platform
 
-This template comes configured with the bare minimum to get started on anything you need.
+Free, self-hosted content and data platform for the MindCET Korea Bootcamp app.
 
-## Quick start
+## Stack
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+- Next.js 16 frontend and server
+- Payload CMS 3 admin panel and APIs
+- PostgreSQL 17 in Docker
+- Seoul Signal design direction (prototype direction 02)
 
-## Quick Start - local setup
+Payload and PostgreSQL are open source. Local development requires no paid account or API key.
 
-To spin up this template locally, follow these steps:
+## Start locally
 
-### Clone
+```bash
+docker compose up -d postgres
+pnpm dev
+```
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+Open:
 
-### Development
+- App: http://localhost:3000
+- Content admin: http://localhost:3000/admin
+- REST API: http://localhost:3000/api
+- GraphQL playground: http://localhost:3000/api/graphql-playground
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+If port 3000 is already occupied, Next.js prints the alternative port (usually 3001).
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+## Development login
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+- Email: `admin@mindcet.local`
+- Password: `change-me-now`
 
-#### Docker (Optional)
+Change both values before any shared or production deployment.
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+This login is only for the small CMS team. Attendees never create accounts. During local
+development, the shared attendee code is `MINDCET26` (or `SEED_EVENT_CODE` from `.env`).
 
-To do so, follow these steps:
+## Editable areas
 
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+- Program: Events, Event days, Sessions
+- People: Speakers, Participants
+- Engagement: Announcements, Feedback responses
+- App: active event, directory and feedback toggles, Seoul Signal colors
+- System: Media and admin users with admin/editor roles
 
-## How it works
+Sessions and event days can be reordered by drag and drop. Events and sessions support drafts and version history.
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+## Attendee app
 
-### Collections
+The root route is the production Next.js version of design direction 02, Seoul Signal. It reads live data from Payload and includes:
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+- Mobile-first Home, Agenda, People, and Me screens
+- Countdown and current/upcoming session signal
+- Multi-day timeline with session and speaker details
+- Searchable participant directory
+- Device-local attendee profiles submitted to Payload for approval
+- Anonymous session feedback stored in PostgreSQL
+- Keyboard focus states and reduced-motion support
 
-- #### Users (Authentication)
+Content edits made in `/admin` are reflected in the attendee app on the next request.
+The shared event code can be changed in App settings. Only its salted hash is stored.
+Attendee profile edit tokens stay in that device's local storage; there is intentionally no
+recovery or cross-device sync.
 
-  Users are auth-enabled collections that have access to the admin panel.
+## Seed from the HTML prototype
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/3.x/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+The seed command reads the data already embedded in `../bootcamp-app.html` and imports it safely. It is idempotent, so it can be run more than once.
 
-- #### Media
+```bash
+pnpm seed
+```
 
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
+Current seed content: 1 event, 3 days, 18 sessions, 10 speakers, and 12 participants.
 
-### Docker
+## Useful commands
 
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
+```bash
+pnpm generate:types
+pnpm exec tsc --noEmit
+pnpm lint
+docker compose down
+```
 
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
+Use `docker compose down` to stop local services without deleting content. Add `-v` only when intentionally resetting the development database.
 
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
+## Production note
 
-## Questions
-
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+The code does not require Payload Cloud. For a zero-cost pilot, connect `DATABASE_URL` to a PostgreSQL provider with a suitable free tier and deploy the Next.js server to a compatible free host. Free-tier terms change, so verify current limits before choosing a provider.
