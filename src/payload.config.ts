@@ -63,7 +63,7 @@ export default buildConfig({
     prodMigrations: process.env.PAYLOAD_RUN_MIGRATIONS === 'true' ? migrations : undefined,
     pool: {
       connectionString,
-      max: 1,
+      max: 5,
     },
   }),
   sharp,
