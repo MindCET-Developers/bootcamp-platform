@@ -16,6 +16,7 @@ import { Participants } from './collections/Participants'
 import { Sessions } from './collections/Sessions'
 import { Speakers } from './collections/Speakers'
 import { AppSettings } from './globals/AppSettings'
+import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -50,6 +51,7 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
+    prodMigrations: migrations,
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
