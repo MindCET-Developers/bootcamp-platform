@@ -21,10 +21,14 @@ import { migrations } from './migrations'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 const databaseURL = process.env.DATABASE_URL || ''
+const supabaseSessionURL = databaseURL.includes('pooler.supabase.com')
+  ? databaseURL.replace(':6543/', ':5432/')
+  : databaseURL
 const connectionString =
-  databaseURL.includes('pooler.supabase.com') && !databaseURL.includes('uselibpqcompat=true')
-    ? `${databaseURL}${databaseURL.includes('?') ? '&' : '?'}uselibpqcompat=true`
-    : databaseURL
+  supabaseSessionURL.includes('pooler.supabase.com') &&
+  !supabaseSessionURL.includes('uselibpqcompat=true')
+    ? `${supabaseSessionURL}${supabaseSessionURL.includes('?') ? '&' : '?'}uselibpqcompat=true`
+    : supabaseSessionURL
 
 export default buildConfig({
   admin: {
@@ -59,6 +63,7 @@ export default buildConfig({
     prodMigrations: migrations,
     pool: {
       connectionString,
+      max: 1,
     },
   }),
   sharp,
