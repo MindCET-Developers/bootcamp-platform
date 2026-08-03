@@ -121,6 +121,8 @@ export default async function HomePage() {
             role: speaker.role,
             organization: speaker.organization || '',
             bio: speaker.bio,
+            photo:
+              speaker.photo && typeof speaker.photo === 'object' ? speaker.photo.url || '' : '',
           }
         }),
     })),

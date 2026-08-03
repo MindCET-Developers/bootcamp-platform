@@ -525,6 +525,42 @@ textarea:focus-visible {
   width: 28px;
 }
 
+/* Speaker chips in the agenda timeline: photo (or initials) + full name */
+.speaker-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 14px;
+}
+.speaker-chip {
+  align-items: center;
+  display: flex;
+  gap: 7px;
+  max-width: 100%;
+}
+.speaker-avatar {
+  border: 1px solid #34414d;
+  border-left: 2px solid var(--cyan);
+  border-radius: 2px;
+  flex: 0 0 auto;
+  height: 28px;
+  object-fit: cover;
+  width: 28px;
+}
+.speaker-chip-name {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.speaker-avatar-lg {
+  height: 42px;
+  width: 42px;
+}
+
 .search-field {
   align-items: center;
   background: var(--surface);

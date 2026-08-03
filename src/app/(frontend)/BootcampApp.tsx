@@ -10,6 +10,7 @@ type SpeakerView = {
   role: string
   organization: string
   bio: string
+  photo: string
 }
 
 type SessionView = {
@@ -422,9 +423,23 @@ export function BootcampApp({ data }: { data: BootcampAppData }) {
                     <h3>{session.title}</h3>
                     <p>{session.location}</p>
                     {session.speakers.length > 0 && (
-                      <div className="monograms">
+                      <div className="speaker-chips">
                         {session.speakers.map((speaker) => (
-                          <span key={speaker.id}>{initials(speaker.name)}</span>
+                          <span className="speaker-chip" key={speaker.id}>
+                            {speaker.photo ? (
+                              <img
+                                alt=""
+                                className="speaker-avatar"
+                                loading="lazy"
+                                src={speaker.photo}
+                              />
+                            ) : (
+                              <span className="speaker-avatar profile-monogram">
+                                {initials(speaker.name)}
+                              </span>
+                            )}
+                            <span className="speaker-chip-name">{speaker.name}</span>
+                          </span>
                         ))}
                       </div>
                     )}
@@ -603,7 +618,11 @@ export function BootcampApp({ data }: { data: BootcampAppData }) {
             <p className="sheet-description">{selected.description}</p>
             {selected.speakers.map((speaker) => (
               <article className="speaker-row" key={speaker.id}>
-                <span className="profile-monogram">{initials(speaker.name)}</span>
+                {speaker.photo ? (
+                  <img alt="" className="speaker-avatar speaker-avatar-lg" src={speaker.photo} />
+                ) : (
+                  <span className="profile-monogram">{initials(speaker.name)}</span>
+                )}
                 <div>
                   <h3>{speaker.name}</h3>
                   <p>
