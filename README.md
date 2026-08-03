@@ -1,6 +1,6 @@
-# MindCET Bootcamp Platform
+# GESAwards Bootcamp Platform
 
-Free, self-hosted content and data platform for the MindCET Korea Bootcamp app.
+Free, self-hosted content and data platform for the GESAwards Bootcamp app.
 
 ## Stack
 
@@ -29,13 +29,13 @@ If port 3000 is already occupied, Next.js prints the alternative port (usually 3
 
 ## Development login
 
-- Email: `admin@mindcet.local`
+- Email: `admin@gesawards.local`
 - Password: `change-me-now`
 
 Change both values before any shared or production deployment.
 
 This login is only for the small CMS team. Attendees never create accounts. During local
-development, the shared attendee code is `MINDCET26` (or `SEED_EVENT_CODE` from `.env`).
+development, the shared attendee code is `GESA26` (or `SEED_EVENT_CODE` from `.env`).
 
 ## Editable areas
 

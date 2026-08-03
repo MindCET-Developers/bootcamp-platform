@@ -82,7 +82,7 @@ const run = async () => {
   const payload = await getPayload({ config })
   const data = readPrototype()
 
-  const email = process.env.SEED_ADMIN_EMAIL || 'admin@mindcet.local'
+  const email = process.env.SEED_ADMIN_EMAIL || 'admin@gesawards.local'
   if (!(await findOne(payload, 'users', 'email', email))) {
     await payload.create({
       collection: 'users',
@@ -90,33 +90,47 @@ const run = async () => {
       data: {
         email,
         password: process.env.SEED_ADMIN_PASSWORD || 'change-me-now',
-        name: 'MindCET Admin',
+        name: 'GESAwards Admin',
         role: 'admin',
       },
     })
   }
 
-  let event = await findOne(payload, 'events', 'slug', 'mindcet-korea-2026')
+  const eventData = {
+    name: 'GESAwards Bootcamp',
+    slug: 'gesawards-bootcamp-2026',
+    startsAt: '2026-08-12T14:00:00+09:00',
+    endsAt: '2026-08-13T12:00:00+09:00',
+    city: 'Seoul',
+    venue: 'Main Hall',
+    timezone: 'Asia/Seoul',
+    hero: {
+      eyebrow: 'Seoul · August 2026',
+      headline: 'Build bold. Think global.',
+      partnerLine: 'GESAwards × K-Startup',
+    },
+    eventState: 'active' as const,
+    _status: 'published' as const,
+  }
+
+  // Find the event by the current slug, then fall back to legacy slugs so an
+  // already-seeded event is renamed in place instead of duplicated.
+  let event =
+    (await findOne(payload, 'events', 'slug', eventData.slug)) ||
+    (await findOne(payload, 'events', 'slug', 'mindcet-gesawards-2026')) ||
+    (await findOne(payload, 'events', 'slug', 'mindcet-korea-2026'))
   if (!event) {
     event = await payload.create({
       collection: 'events',
       overrideAccess: true,
-      data: {
-        name: 'MindCET Korea Bootcamp',
-        slug: 'mindcet-korea-2026',
-        startsAt: '2026-08-18T09:00:00+09:00',
-        endsAt: '2026-08-20T18:00:00+09:00',
-        city: 'Seoul',
-        venue: 'Seoul Startup Hub',
-        timezone: 'Asia/Seoul',
-        hero: {
-          eyebrow: 'Seoul · August 2026',
-          headline: 'Build bold. Think global.',
-          partnerLine: 'MindCET × K-Startup',
-        },
-        eventState: 'active',
-        _status: 'published',
-      },
+      data: eventData,
+    })
+  } else {
+    event = await payload.update({
+      collection: 'events',
+      id: event.id,
+      overrideAccess: true,
+      data: { name: eventData.name, slug: eventData.slug, hero: eventData.hero },
     })
   }
 
@@ -210,7 +224,7 @@ const run = async () => {
       directoryEnabled: true,
       feedbackEnabled: true,
       ...(!currentSettings.accessCodeHash
-        ? { newAccessCode: process.env.SEED_EVENT_CODE || 'MINDCET26' }
+        ? { newAccessCode: process.env.SEED_EVENT_CODE || 'GESA26' }
         : {}),
     },
   })

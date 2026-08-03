@@ -35,7 +35,7 @@ export default buildConfig({
     user: Users.slug,
     theme: 'dark',
     meta: {
-      titleSuffix: ' · MindCET Bootcamp',
+      titleSuffix: ' · GESAwards Bootcamp',
     },
     importMap: {
       baseDir: path.resolve(dirname),

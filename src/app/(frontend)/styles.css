@@ -81,39 +81,43 @@ a {
   z-index: 30;
 }
 .brand {
-  align-items: center;
+  align-items: flex-start;
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 4px;
   text-decoration: none;
 }
-.brand-mark {
-  align-items: center;
-  border: 1px solid var(--cyan);
-  border-radius: 3px;
-  color: var(--cyan);
-  display: flex;
+.brand-logo {
+  align-items: baseline;
+  color: #fff;
+  display: inline-flex;
   font-family: var(--display);
-  font-size: 17px;
-  font-weight: 800;
-  height: 38px;
-  justify-content: center;
-  width: 38px;
-}
-.brand strong,
-.brand small {
-  display: block;
-}
-.brand strong {
-  font-family: var(--display);
-  font-size: 16px;
-  letter-spacing: 0.02em;
+  font-size: 22px;
   line-height: 1;
 }
-.brand small {
+.brand-logo b {
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+.brand-logo-tail {
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.brand-logo-arrow {
+  align-self: center;
+  fill: none;
+  height: 0.6em;
+  margin: 0 -0.05em -0.08em;
+  stroke: #e2263a;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.6;
+  width: 0.6em;
+}
+.brand-sub {
   color: var(--muted);
   font-size: 9px;
   letter-spacing: 0.12em;
-  margin-top: 5px;
   text-transform: uppercase;
 }
 .signal-label {

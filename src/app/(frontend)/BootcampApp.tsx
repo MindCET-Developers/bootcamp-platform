@@ -287,11 +287,14 @@ export function BootcampApp({ data }: { data: BootcampAppData }) {
     <div className="app-shell">
       <header className="topbar">
         <a className="brand" href="#top" onClick={() => navigate('home')}>
-          <span className="brand-mark">M</span>
-          <span>
-            <strong>MindCET Korea</strong>
-            <small>Bootcamp companion</small>
+          <span className="brand-logo" aria-label="GESAwards">
+            <b>GESA</b>
+            <svg className="brand-logo-arrow" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 19 L19 5 M11 5 H19 V13" />
+            </svg>
+            <span className="brand-logo-tail">wards</span>
           </span>
+          <span className="brand-sub">Bootcamp companion</span>
         </a>
         <span className="signal-label">SEOUL / 37°33′N</span>
       </header>

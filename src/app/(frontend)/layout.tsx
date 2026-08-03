@@ -2,8 +2,8 @@ import React from 'react'
 import './styles.css'
 
 export const metadata = {
-  description: 'The mobile companion for the MindCET Korea Bootcamp.',
-  title: 'MindCET Korea · Bootcamp Companion',
+  description: 'The mobile companion for the GESAwards Bootcamp.',
+  title: 'GESAwards Bootcamp · Companion',
 }
 
 export const viewport = {
