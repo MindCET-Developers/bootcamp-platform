@@ -70,6 +70,15 @@ export const readCookie = (request: Request, name: string) => {
 export const requireEventAccess = (request: Request) =>
   verifyAccessCookie(readCookie(request, ATTENDEE_COOKIE))
 
+// Magic link: a stable, signed token that lets an attendee unlock the event
+// by scanning a QR code instead of typing the shared access code. The token is
+// derived from PAYLOAD_SECRET, so it stays constant until the secret changes.
+export const createMagicLinkToken = () =>
+  createHmac('sha256', secret()).update('attendee-magic-link').digest('base64url')
+
+export const verifyMagicLinkToken = (token: string) =>
+  safeEqual(token, createMagicLinkToken())
+
 export const createProfileToken = () => randomBytes(32).toString('base64url')
 
 export const hashProfileToken = (token: string) =>
