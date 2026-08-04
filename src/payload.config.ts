@@ -22,14 +22,16 @@ import { migrations } from './migrations'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 const databaseURL = process.env.DATABASE_URL || ''
-const supabaseSessionURL = databaseURL.includes('pooler.supabase.com')
-  ? databaseURL.replace(':6543/', ':5432/')
-  : databaseURL
+// Use Supabase's transaction pooler (port 6543, as provided in DATABASE_URL) for
+// the serverless runtime. Transaction mode multiplexes connections per-query, so
+// it does not hit session mode's hard 15-client cap ("max clients reached in
+// session mode") that breaks the app under concurrent load. The uselibpqcompat
+// flag lets Supavisor's transaction pooler support the prepared statements that
+// node-postgres/drizzle rely on.
 const connectionString =
-  supabaseSessionURL.includes('pooler.supabase.com') &&
-  !supabaseSessionURL.includes('uselibpqcompat=true')
-    ? `${supabaseSessionURL}${supabaseSessionURL.includes('?') ? '&' : '?'}uselibpqcompat=true`
-    : supabaseSessionURL
+  databaseURL.includes('pooler.supabase.com') && !databaseURL.includes('uselibpqcompat=true')
+    ? `${databaseURL}${databaseURL.includes('?') ? '&' : '?'}uselibpqcompat=true`
+    : databaseURL
 
 export default buildConfig({
   admin: {
@@ -64,7 +66,7 @@ export default buildConfig({
     prodMigrations: process.env.PAYLOAD_RUN_MIGRATIONS === 'true' ? migrations : undefined,
     pool: {
       connectionString,
-      max: 5,
+      max: 1,
     },
   }),
   sharp,
