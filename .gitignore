@@ -51,3 +51,6 @@ node_modules/
 
 # Generated QR magic-link images
 qr/
+
+# Source speaker portraits — uploaded to Blob storage, not tracked here
+speakers/

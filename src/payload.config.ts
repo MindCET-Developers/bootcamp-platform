@@ -79,7 +79,11 @@ export default buildConfig({
     // set the adapter is used, otherwise we fall back to local disk (dev).
     vercelBlobStorage({
       enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
-      collections: { media: true },
+      // disablePayloadAccessControl makes file URLs point straight at the Blob
+      // CDN instead of proxying every image through /api/media/file/*. The store
+      // is public, so no access control is lost — and an agenda full of speaker
+      // portraits no longer costs one serverless invocation per image.
+      collections: { media: { disablePayloadAccessControl: true } },
       token: process.env.BLOB_READ_WRITE_TOKEN || '',
     }),
   ],
