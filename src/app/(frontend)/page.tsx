@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
+import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 
 import { ATTENDEE_COOKIE, verifyAccessCookie } from '@/lib/attendeeAccess'
@@ -9,12 +10,24 @@ import { AccessGate } from './AccessGate'
 import { BootcampApp, type BootcampAppData } from './BootcampApp'
 import './styles.css'
 
+// The page stays dynamic (it reads the per-request access cookie), but the
+// event data itself is loaded through the Data Cache so the database is queried
+// at most once per revalidation window regardless of traffic. This keeps a
+// crowd of attendees loading the app from exhausting Supabase's pooled
+// connections (session mode is capped at 15 clients).
 export const dynamic = 'force-dynamic'
+
+// Seconds the cached event payload is served before the DB is queried again.
+// Event content is set up ahead of time, so a short staleness window is fine;
+// edits in the admin appear within this window.
+const APP_DATA_TTL = 60
 
 const asID = (value: number | { id: number } | null | undefined) =>
   typeof value === 'object' && value ? value.id : value
 
-export default async function HomePage() {
+// Builds the full BootcampAppData (or null when there is no active event).
+// Wrapped in unstable_cache below so concurrent requests share one DB round.
+const buildAppData = async (): Promise<BootcampAppData | null> => {
   const payload = await getPayload({ config })
   const settings = await payload.findGlobal({ slug: 'app-settings', depth: 1 })
 
@@ -34,20 +47,7 @@ export default async function HomePage() {
     event = fallback.docs[0] || null
   }
 
-  const access = verifyAccessCookie((await cookies()).get(ATTENDEE_COOKIE)?.value)
-  if (!access || access.eventID !== event.id) {
-    return <AccessGate city={event.city} eventName={event.name} />
-  }
-
-  if (!event) {
-    return (
-      <main className="empty-state">
-        <span>NO ACTIVE EVENT</span>
-        <h1>Choose an active event in Payload.</h1>
-        <Link href="/admin/globals/app-settings">Open app settings</Link>
-      </main>
-    )
-  }
+  if (!event) return null
 
   const [daysResult, sessionsResult, participantsResult, announcementsResult] = await Promise.all([
     payload.find({
@@ -145,6 +145,34 @@ export default async function HomePage() {
       directory: settings.directoryEnabled !== false,
       feedback: settings.feedbackEnabled !== false,
     },
+  }
+
+  return data
+}
+
+// Cached view over buildAppData: one shared DB round per APP_DATA_TTL window,
+// serving every concurrent request from the Data Cache in between.
+const loadAppData = unstable_cache(buildAppData, ['bootcamp-app-data'], {
+  revalidate: APP_DATA_TTL,
+  tags: ['app-data'],
+})
+
+export default async function HomePage() {
+  const data = await loadAppData()
+
+  if (!data) {
+    return (
+      <main className="empty-state">
+        <span>NO ACTIVE EVENT</span>
+        <h1>Choose an active event in Payload.</h1>
+        <Link href="/admin/globals/app-settings">Open app settings</Link>
+      </main>
+    )
+  }
+
+  const access = verifyAccessCookie((await cookies()).get(ATTENDEE_COOKIE)?.value)
+  if (!access || access.eventID !== data.event.id) {
+    return <AccessGate city={data.event.city} eventName={data.event.name} />
   }
 
   return <BootcampApp data={data} />
