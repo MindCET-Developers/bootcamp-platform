@@ -93,9 +93,10 @@ export const requestKey = (request: Request) => {
   return createHmac('sha256', secret()).update(source).digest('hex')
 }
 
-export const accessCodeExpiry = (eventEndsAt: string) => {
+export const accessCodeExpiry = (eventEndsAt: string | null | undefined) => {
   const now = Date.now()
   const thirtyDays = now + 30 * 24 * 60 * 60 * 1000
-  const weekAfterEvent = new Date(eventEndsAt).getTime() + 7 * 24 * 60 * 60 * 1000
+  const endsAtMs = eventEndsAt ? new Date(eventEndsAt).getTime() : NaN
+  const weekAfterEvent = Number.isNaN(endsAtMs) ? thirtyDays : endsAtMs + 7 * 24 * 60 * 60 * 1000
   return new Date(Math.max(now + 60 * 60 * 1000, Math.min(thirtyDays, weekAfterEvent)))
 }

@@ -64,7 +64,12 @@ export default buildConfig({
     prodMigrations: process.env.PAYLOAD_RUN_MIGRATIONS === 'true' ? migrations : undefined,
     pool: {
       connectionString,
-      max: 5,
+      // Small per-instance pool: Supabase's session pooler caps total clients
+      // at 15, so keeping each serverless instance's footprint low lets more
+      // instances run concurrently before hitting the cap. The heavy read
+      // paths are cached (see eventContext / the home page), so instances
+      // rarely need more than a couple of connections at once.
+      max: 3,
     },
   }),
   sharp,

@@ -10,15 +10,13 @@ import {
   verifyAccessCode,
 } from '@/lib/attendeeAccess'
 import { clearAccessFailures, getAccessBlock, recordAccessFailure } from '@/lib/accessRateLimit'
+import { getEventContext } from '@/lib/eventContext'
 import config from '@/payload.config'
-
-const activeEventID = (value: unknown) =>
-  typeof value === 'object' && value && 'id' in value ? Number(value.id) : Number(value)
 
 export async function POST(request: Request) {
   const payload = await getPayload({ config })
   const key = requestKey(request)
-  const retryAfter = await getAccessBlock(payload, key)
+  const { retryAfter, hasRecord } = await getAccessBlock(payload, key)
   if (retryAfter) {
     return NextResponse.json(
       { error: 'Too many attempts. Please try again later.' },
@@ -28,11 +26,10 @@ export async function POST(request: Request) {
 
   const body = (await request.json().catch(() => ({}))) as { code?: unknown }
   const code = typeof body.code === 'string' ? body.code : ''
-  const settings = await payload.findGlobal({ slug: 'app-settings', overrideAccess: true, depth: 0 })
-  const eventID = activeEventID(settings.activeEvent)
-  const hash = settings.accessCodeHash
+  // Cached (event id + access-code hash) — avoids a DB read on every attempt.
+  const ctx = await getEventContext()
 
-  if (!code || !hash || !Number.isInteger(eventID) || !verifyAccessCode(code, hash)) {
+  if (!code || !ctx?.accessCodeHash || !verifyAccessCode(code, ctx.accessCodeHash)) {
     const blockedFor = await recordAccessFailure(payload, key)
     return NextResponse.json(
       { error: blockedFor ? 'Too many attempts. Please try again later.' : 'That code is not valid.' },
@@ -43,17 +40,17 @@ export async function POST(request: Request) {
     )
   }
 
-  const event = await payload.findByID({ collection: 'events', id: eventID, overrideAccess: true })
-  const expires = accessCodeExpiry(event.endsAt)
+  const expires = accessCodeExpiry(ctx.endsAt)
   const jar = await cookies()
-  jar.set(ATTENDEE_COOKIE, createAccessCookie(eventID, expires), {
+  jar.set(ATTENDEE_COOKIE, createAccessCookie(ctx.eventID, expires), {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
     path: '/',
     expires,
   })
-  await clearAccessFailures(payload, key)
+  // Only touch the DB to clear when there was actually a failure record.
+  if (hasRecord) await clearAccessFailures(payload, key)
   return NextResponse.json({ ok: true, expiresAt: expires.toISOString() })
 }
 

@@ -2,6 +2,9 @@ import type { Payload } from 'payload'
 
 import { ACCESS_WINDOW_MS, MAX_ACCESS_FAILURES } from './attendeeAccess'
 
+// Returns how long the key is blocked for (0 if not blocked) and whether a
+// rate-limit record exists at all — the caller can skip clearing on success
+// when there is nothing to clear (the common case), saving a DB write.
 export const getAccessBlock = async (payload: Payload, key: string) => {
   const result = await payload.find({
     collection: 'access-attempts',
@@ -11,7 +14,8 @@ export const getAccessBlock = async (payload: Payload, key: string) => {
   })
   const attempt = result.docs[0]
   const blockedUntil = attempt?.blockedUntil ? new Date(attempt.blockedUntil).getTime() : 0
-  return blockedUntil > Date.now() ? Math.ceil((blockedUntil - Date.now()) / 1000) : 0
+  const retryAfter = blockedUntil > Date.now() ? Math.ceil((blockedUntil - Date.now()) / 1000) : 0
+  return { retryAfter, hasRecord: Boolean(attempt) }
 }
 
 export const recordAccessFailure = async (payload: Payload, key: string) => {
