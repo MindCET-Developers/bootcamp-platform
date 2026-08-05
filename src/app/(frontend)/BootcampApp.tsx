@@ -480,12 +480,13 @@ export function BootcampApp({ data }: { data: BootcampAppData }) {
                     <span className="profile-monogram">{initials(person.name)}</span>
                     <div>
                       <h3>{person.name}</h3>
-                      <p>
-                        {person.role} · {person.organization}
-                      </p>
+                      {/* Role and organization are optional, so join only what exists. */}
+                      {(person.role || person.organization) && (
+                        <p>{[person.role, person.organization].filter(Boolean).join(' · ')}</p>
+                      )}
                     </div>
                   </div>
-                  <p className="person-about">{person.about}</p>
+                  {person.about && <p className="person-about">{person.about}</p>}
                   <div className="tags">
                     {person.tags.map((tag) => (
                       <span key={tag}>{tag}</span>
@@ -530,9 +531,9 @@ export function BootcampApp({ data }: { data: BootcampAppData }) {
               </div>
               <div className="form-grid">
                 <label><span>Name *</span><input value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} /></label>
-                <label><span>Role *</span><input value={profile.role} onChange={(e) => setProfile({ ...profile, role: e.target.value })} /></label>
-                <label><span>Organization *</span><input value={profile.organization} onChange={(e) => setProfile({ ...profile, organization: e.target.value })} /></label>
-                <label className="wide"><span>About *</span><textarea maxLength={1000} value={profile.about} onChange={(e) => setProfile({ ...profile, about: e.target.value })} /></label>
+                <label><span>Role</span><input value={profile.role} onChange={(e) => setProfile({ ...profile, role: e.target.value })} /></label>
+                <label><span>Organization</span><input value={profile.organization} onChange={(e) => setProfile({ ...profile, organization: e.target.value })} /></label>
+                <label className="wide"><span>About</span><textarea maxLength={1000} value={profile.about} onChange={(e) => setProfile({ ...profile, about: e.target.value })} /></label>
                 <label className="wide"><span>Interests</span><input placeholder="AI, learning, founders" value={tagText} onChange={(e) => setTagText(e.target.value)} /><small>Separate with commas</small></label>
                 <label className="wide"><span>Link</span><input inputMode="url" placeholder="linkedin.com/in/you" value={profile.contactURL} onChange={(e) => setProfile({ ...profile, contactURL: e.target.value })} /></label>
               </div>

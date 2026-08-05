@@ -129,9 +129,9 @@ const buildAppData = async (): Promise<BootcampAppData | null> => {
     participants: participantsResult.docs.map((person) => ({
       id: person.id,
       name: person.name,
-      role: person.role,
-      organization: person.organization,
-      about: person.about,
+      role: person.role || '',
+      organization: person.organization || '',
+      about: person.about || '',
       tags: (person.tags || []).map((tag) => tag.label),
       contactURL: person.contactURL || '',
     })),

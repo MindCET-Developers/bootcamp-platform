@@ -245,9 +245,9 @@ export interface Participant {
   id: number;
   event: number | Event;
   name: string;
-  role: string;
-  organization: string;
-  about: string;
+  role?: string | null;
+  organization?: string | null;
+  about?: string | null;
   tags?:
     | {
         label: string;

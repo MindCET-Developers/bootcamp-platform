@@ -18,14 +18,17 @@ export const Participants: CollectionConfig = {
   fields: [
     { name: 'event', type: 'relationship', relationTo: 'events', required: true },
     { name: 'name', type: 'text', required: true },
+    // Role, organization and about are optional: staff often add a person
+    // before their details are known, and the directory card renders whichever
+    // of these happen to be filled in.
     {
       type: 'row',
       fields: [
-        { name: 'role', type: 'text', required: true, admin: { width: '50%' } },
-        { name: 'organization', type: 'text', required: true, admin: { width: '50%' } },
+        { name: 'role', type: 'text', admin: { width: '50%' } },
+        { name: 'organization', type: 'text', admin: { width: '50%' } },
       ],
     },
-    { name: 'about', type: 'textarea', required: true },
+    { name: 'about', type: 'textarea' },
     {
       name: 'tags',
       type: 'array',

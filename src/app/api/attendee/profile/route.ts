@@ -38,9 +38,9 @@ const parseProfile = (body: ProfileInput) => ({
 const publicProfile = (profile: Participant) => ({
   participantId: profile.id,
   name: profile.name,
-  role: profile.role,
-  organization: profile.organization,
-  about: profile.about,
+  role: profile.role || '',
+  organization: profile.organization || '',
+  about: profile.about || '',
   tags: (profile.tags || []).map((tag: { label: string }) => tag.label),
   contactURL: profile.contactURL || '',
   status: profile.status,
@@ -80,8 +80,9 @@ export async function POST(request: Request) {
   if (!access) return NextResponse.json({ error: 'Event access required.' }, { status: 401 })
   const body = (await request.json().catch(() => ({}))) as ProfileInput
   const profile = parseProfile(body)
-  if (!profile.name || !profile.role || !profile.organization || !profile.about) {
-    return NextResponse.json({ error: 'Name, role, organization and bio are required.' }, { status: 400 })
+  // Only the name is required — the rest of the profile can be filled in later.
+  if (!profile.name) {
+    return NextResponse.json({ error: 'Name is required.' }, { status: 400 })
   }
   const token = createProfileToken()
   const payload = await getPayload({ config })
@@ -106,8 +107,9 @@ export async function PUT(request: Request) {
   const owned = await ownedProfile(body, access.eventID)
   if (!owned) return NextResponse.json({ error: 'Invalid profile token.' }, { status: 403 })
   const profile = parseProfile(body)
-  if (!profile.name || !profile.role || !profile.organization || !profile.about) {
-    return NextResponse.json({ error: 'Name, role, organization and bio are required.' }, { status: 400 })
+  // Only the name is required — the rest of the profile can be filled in later.
+  if (!profile.name) {
+    return NextResponse.json({ error: 'Name is required.' }, { status: 400 })
   }
   const updated = await owned.payload.update({
     collection: 'participants', id: owned.profile.id, overrideAccess: true,
