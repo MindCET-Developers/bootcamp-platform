@@ -33,15 +33,6 @@ type PrototypeData = {
     title: string
     sessions: PrototypeSession[]
   }>
-  people: Array<{
-    id: string
-    name: string
-    role: string
-    startup: string
-    about: string
-    tags: string[]
-    contact: string
-  }>
 }
 
 const slugify = (value: string) =>
@@ -164,7 +155,9 @@ const run = async () => {
     }
 
     for (let index = 0; index < sourceDay.sessions.length; index += 1) {
-      const [time, title, type, location, speakers, description] = sourceDay.sessions[index]
+      // The prototype tuple still carries a location, but sessions no longer
+      // have that field — everything happens in one place.
+      const [time, title, type, , speakers, description] = sourceDay.sessions[index]
       const slug = `${sourceDay.date}-${slugify(title)}`
       if (await findOne(payload, 'sessions', 'slug', slug)) continue
 
@@ -181,7 +174,6 @@ const run = async () => {
           startsAt: atSeoulTime(sourceDay.date, time),
           endsAt: atSeoulTime(sourceDay.date, next || `${fallbackHour}:${time.slice(3, 5)}`),
           type: type as 'Talk' | 'Workshop' | 'Panel' | 'Networking' | 'Visit',
-          location,
           description,
           speakers: speakers
             .map((id) => speakerIDs.get(id))
@@ -193,24 +185,11 @@ const run = async () => {
     }
   }
 
-  for (const person of data.people) {
-    if (await findOne(payload, 'participants', 'name', person.name)) continue
-    await payload.create({
-      collection: 'participants',
-      overrideAccess: true,
-      data: {
-        event: event.id,
-        name: person.name,
-        role: person.role,
-        organization: person.startup,
-        about: person.about,
-        tags: person.tags.map((label) => ({ label })),
-        contactURL: person.contact,
-        status: 'approved',
-        source: 'staff',
-      },
-    })
-  }
+  // The prototype's `people` array is invented demo data (fake founders, fake
+  // startups, fake contact domains) and is deliberately not seeded. The
+  // directory is filled by real attendee submissions and by
+  // `pnpm add:participants` for staff. Use `pnpm remove:demo-participants` to
+  // clear rows an earlier version of this script created.
 
   const currentSettings = await payload.findGlobal({
     slug: 'app-settings', overrideAccess: true, depth: 0,
