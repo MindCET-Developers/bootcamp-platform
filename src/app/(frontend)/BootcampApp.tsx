@@ -288,9 +288,10 @@ export function BootcampApp({ data }: { data: BootcampAppData }) {
       <header className="topbar">
         <a className="brand" href="#top" onClick={() => navigate('home')}>
           <span className="brand-logo" aria-label="GESAwards">
-            <b>GESA</b>
-            <svg className="brand-logo-arrow" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M5 19 L19 5 M11 5 H19 V13" />
+            <svg className="brand-logo-arrow" viewBox="0 0 28 28" aria-hidden="true">
+              <line x1="8" y1="20" x2="16" y2="10" stroke="#FF3333" strokeWidth="2.5" strokeLinecap="round"/>
+              <polygon points="20,4 26,8 18,12" fill="#FF3333"/>
+              <rect x="7" y="19" width="3" height="3" fill="#AAAAAA"/>
             </svg>
             <span className="brand-logo-tail">wards</span>
           </span>

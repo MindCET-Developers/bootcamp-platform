@@ -417,8 +417,12 @@
   <nav>
     <a class="nav-brand" href="#">
       <svg viewBox="0 0 28 28" fill="none" aria-label="GESAwards">
-        <rect width="28" height="28" rx="7" fill="#65D5DF" opacity=".12"/>
-        <path d="M6 22 L22 6 M14 6 H22 V14" stroke="#65D5DF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Arrow shaft line -->
+        <line x1="8" y1="20" x2="16" y2="10" stroke="#FF3333" stroke-width="2" stroke-linecap="round"/>
+        <!-- Arrow head triangle -->
+        <polygon points="20,4 26,8 18,12" fill="#FF3333"/>
+        <!-- Small gray base -->
+        <rect x="7" y="19" width="3" height="3" fill="#AAAAAA"/>
       </svg>
       GESAwards Bootcamp
     </a>
