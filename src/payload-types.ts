@@ -189,7 +189,6 @@ export interface Session {
   startsAt: string;
   endsAt: string;
   type: 'Talk' | 'Workshop' | 'Panel' | 'Networking' | 'Visit';
-  location: string;
   description: string;
   speakers?: (number | Speaker)[] | null;
   sessionState: 'scheduled' | 'live' | 'completed' | 'cancelled';
@@ -489,7 +488,6 @@ export interface SessionsSelect<T extends boolean = true> {
   startsAt?: T;
   endsAt?: T;
   type?: T;
-  location?: T;
   description?: T;
   speakers?: T;
   sessionState?: T;

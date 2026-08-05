@@ -20,7 +20,6 @@ type SessionView = {
   startsAt: string
   endsAt: string
   type: string
-  location: string
   description: string
   state: 'scheduled' | 'live' | 'completed' | 'cancelled'
   speakers: SpeakerView[]
@@ -421,7 +420,6 @@ export function BootcampApp({ data }: { data: BootcampAppData }) {
                   <button className="session-card card" onClick={() => openSession(session)}>
                     <span className="session-type">{session.type}</span>
                     <h3>{session.title}</h3>
-                    <p>{session.location}</p>
                     {session.speakers.length > 0 && (
                       <div className="speaker-chips">
                         {session.speakers.map((speaker) => (
@@ -614,7 +612,7 @@ export function BootcampApp({ data }: { data: BootcampAppData }) {
             </header>
             <p className="sheet-meta">
               {formatTime(selected.startsAt, data.event.timezone)}–
-              {formatTime(selected.endsAt, data.event.timezone)} · {selected.location}
+              {formatTime(selected.endsAt, data.event.timezone)}
             </p>
             <p className="sheet-description">{selected.description}</p>
             {selected.speakers.map((speaker) => (

@@ -108,7 +108,6 @@ const buildAppData = async (): Promise<BootcampAppData | null> => {
       startsAt: session.startsAt,
       endsAt: session.endsAt,
       type: session.type,
-      location: session.location,
       description: session.description,
       state: session.sessionState,
       speakers: (session.speakers || [])

@@ -13,14 +13,25 @@ process.env.PAYLOAD_MIGRATING = 'true'
 // contactURL and tags. `speaker` is matched case-insensitively against speaker
 // names and must resolve to exactly one speaker.
 //
-// `role` overrides the speaker's role: a speaker record holds the role at the
-// event ("Host", "Facilitator") while the directory shows the job title.
+// `role` and `organization` override what the speaker record says: a speaker
+// record holds the role at the event ("Host", "Facilitator") and the umbrella
+// org, while the directory shows the job title and the specific team.
 //
 // `seededAs` is the name a previous run wrote to the participants table. It
 // lets this script recognise its own earlier row when the speaker's full name
 // differs, so re-running renames that row instead of creating a duplicate.
-const PEOPLE: Array<{ speaker: string; role?: string; seededAs?: string }> = [
-  { speaker: 'Ilan Ben Yaakov', role: 'VP Learning Experience', seededAs: 'Ilan Michalby' },
+const PEOPLE: Array<{
+  speaker: string
+  role?: string
+  organization?: string
+  seededAs?: string
+}> = [
+  {
+    speaker: 'Ilan Ben Yaakov',
+    role: 'VP Learning Experience',
+    organization: 'MindCET Labs',
+    seededAs: 'Ilan Michalby',
+  },
   { speaker: 'Avi Warshavsky', seededAs: 'Avi' },
   { speaker: 'Erella Moshe', role: 'EdTech Campus Manager', seededAs: 'Arella' },
 ]
@@ -90,7 +101,7 @@ const run = async () => {
       // NOT NULL until the optional_participant_details migration runs, and both
       // render as "absent" in the directory card either way.
       role: person.role || speaker.role || '',
-      organization: speaker.organization || '',
+      organization: person.organization || speaker.organization || '',
       about: speaker.bio || '',
       tags: (speaker.tags || []).map((tag) => ({ label: tag.label })),
       contactURL: speaker.contactURL || '',

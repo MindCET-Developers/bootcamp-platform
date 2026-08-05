@@ -8,7 +8,7 @@ export const Sessions: CollectionConfig = {
   admin: {
     group: 'Program',
     useAsTitle: 'title',
-    defaultColumns: ['title', 'day', 'startsAt', 'type', 'location', 'sessionState'],
+    defaultColumns: ['title', 'day', 'startsAt', 'type', 'sessionState'],
   },
   access: {
     create: adminsAndEditors,
@@ -36,10 +36,9 @@ export const Sessions: CollectionConfig = {
           name: 'type',
           type: 'select',
           required: true,
-          admin: { width: '50%' },
+          admin: { width: '100%' },
           options: ['Talk', 'Workshop', 'Panel', 'Networking', 'Visit'],
         },
-        { name: 'location', type: 'text', required: true, admin: { width: '50%' } },
       ],
     },
     { name: 'description', type: 'textarea', required: true },
