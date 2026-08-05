@@ -181,7 +181,7 @@ const run = async () => {
         event: mindcetEventId,
         label: 'Day 1',
         title: 'Conference Day',
-        date: new Date('2026-08-13'),
+        date: '2026-08-13' as any,
         summary: 'Expert talks on AI in education',
       },
       overrideAccess: true,
