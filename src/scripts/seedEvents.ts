@@ -66,15 +66,7 @@ const run = async () => {
     overrideAccess: true,
   })
 
-  const mindcetEvent = await payload.find({
-    collection: 'events',
-    where: { slug: { equals: 'mindcet-conference-2026' } },
-    limit: 1,
-    overrideAccess: true,
-  })
-
   let gesEventId: number
-  let mindcetEventId: number
 
   if (gesEvent.docs[0]) {
     gesEventId = gesEvent.docs[0].id
@@ -85,8 +77,8 @@ const run = async () => {
       data: {
         name: 'GESAwards Bootcamp 2026',
         slug: 'gesawards-bootcamp-2026',
-        startsAt: '2026-08-12T14:00:00Z' as any,
-        endsAt: '2026-08-12T17:00:00Z' as any,
+        startsAt: '2026-08-12T14:00:00+09:00' as any,
+        endsAt: '2026-08-12T17:00:00+09:00' as any,
         city: 'Seoul',
         venue: 'MindCET Pavilion, Booth A111',
         timezone: 'Asia/Seoul',
@@ -103,32 +95,9 @@ const run = async () => {
     console.log(`Created GESAwards event (id: ${gesEventId})`)
   }
 
-  if (mindcetEvent.docs[0]) {
-    mindcetEventId = mindcetEvent.docs[0].id
-    console.log(`MindCET event already exists (id: ${mindcetEventId})`)
-  } else {
-    const created = await payload.create({
-      collection: 'events',
-      data: {
-        name: 'MindCET Conference 2026',
-        slug: 'mindcet-conference-2026',
-        startsAt: '2026-08-13T10:00:00Z' as any,
-        endsAt: '2026-08-13T12:00:00Z' as any,
-        city: 'Seoul',
-        venue: 'Edu+ Korea',
-        timezone: 'Asia/Seoul',
-        hero: {
-          eyebrow: 'Seoul · August 2026',
-          headline: 'MindCET Conference',
-          partnerLine: 'Global Innovation Hub',
-        },
-        eventState: 'active',
-      },
-      overrideAccess: true,
-    })
-    mindcetEventId = created.id
-    console.log(`Created MindCET event (id: ${mindcetEventId})`)
-  }
+  // Both days belong to the same event: the app renders one active event, so a
+  // separate conference event would never be visible to attendees.
+  const mindcetEventId = gesEventId
 
   // 3. Create/Update Days
   const gesDay = await payload.find({
@@ -161,7 +130,7 @@ const run = async () => {
       data: {
         event: gesEventId,
         label: 'Day 1',
-        title: 'Bootcamp Day',
+        title: 'GESAwards Bootcamp',
         date: '2026-08-12' as any,
         summary: 'Full day of talks, panels, and networking',
       },
@@ -179,8 +148,8 @@ const run = async () => {
       collection: 'event-days',
       data: {
         event: mindcetEventId,
-        label: 'Day 1',
-        title: 'Conference Day',
+        label: 'Day 2',
+        title: 'MindCET Labs Conference',
         date: '2026-08-13' as any,
         summary: 'Expert talks on AI in education',
       },
@@ -195,8 +164,8 @@ const run = async () => {
     {
       title: 'Welcome',
       slug: 'gesawards-welcome',
-      startsAt: '2026-08-12T14:00:00Z' as any,
-      endsAt: '2026-08-12T14:10:00Z' as any,
+      startsAt: '2026-08-12T14:00:00+09:00' as any,
+      endsAt: '2026-08-12T14:10:00+09:00' as any,
       type: 'Talk',
       description: 'Opening remarks and welcome to GESAwards Bootcamp',
       speakers: ['Dr. Ilan Ben Yaakov'],
@@ -204,8 +173,8 @@ const run = async () => {
     {
       title: 'Getting to Know You (Clock)',
       slug: 'gesawards-clock',
-      startsAt: '2026-08-12T14:10:00Z' as any,
-      endsAt: '2026-08-12T14:30:00Z' as any,
+      startsAt: '2026-08-12T14:10:00+09:00' as any,
+      endsAt: '2026-08-12T14:30:00+09:00' as any,
       type: 'Networking',
       description: 'Speed networking session',
       speakers: ['Erella Moshe'],
@@ -213,8 +182,8 @@ const run = async () => {
     {
       title: 'Global EdTech Trends and Opportunities',
       slug: 'gesawards-trends',
-      startsAt: '2026-08-12T14:30:00Z' as any,
-      endsAt: '2026-08-12T14:50:00Z' as any,
+      startsAt: '2026-08-12T14:30:00+09:00' as any,
+      endsAt: '2026-08-12T14:50:00+09:00' as any,
       type: 'Talk',
       description: 'Overview of global EdTech market trends',
       speakers: ['Avi Warshavsky'],
@@ -222,8 +191,8 @@ const run = async () => {
     {
       title: 'EdTech Changing the Global Educational Market',
       slug: 'gesawards-global-market',
-      startsAt: '2026-08-12T14:50:00Z' as any,
-      endsAt: '2026-08-12T15:40:00Z' as any,
+      startsAt: '2026-08-12T14:50:00+09:00' as any,
+      endsAt: '2026-08-12T15:40:00+09:00' as any,
       type: 'Panel',
       description: 'Panel discussion on how EdTech is transforming global education',
       speakers: [
@@ -238,8 +207,8 @@ const run = async () => {
     {
       title: 'EdTech Companies Take the Stage',
       slug: 'gesawards-companies-panel',
-      startsAt: '2026-08-12T15:40:00Z' as any,
-      endsAt: '2026-08-12T16:00:00Z' as any,
+      startsAt: '2026-08-12T15:40:00+09:00' as any,
+      endsAt: '2026-08-12T16:00:00+09:00' as any,
       type: 'Panel',
       description: 'Founders share their experiences building EdTech products',
       speakers: ['Ken Lai', 'James Oh', 'Kiyoung Kim', 'Celine Xu', 'Michael Iacovino'],
@@ -247,8 +216,8 @@ const run = async () => {
     {
       title: 'The EdTech Vibecoding Revolution',
       slug: 'gesawards-vibecoding',
-      startsAt: '2026-08-12T16:00:00Z' as any,
-      endsAt: '2026-08-12T16:20:00Z' as any,
+      startsAt: '2026-08-12T16:00:00+09:00' as any,
+      endsAt: '2026-08-12T16:20:00+09:00' as any,
       type: 'Talk',
       description: 'How AI-driven development is transforming EdTech',
       speakers: ['Dr. Ilan Ben Yaakov'],
@@ -256,8 +225,8 @@ const run = async () => {
     {
       title: 'AI Disrupting the Classroom',
       slug: 'gesawards-ai-classroom',
-      startsAt: '2026-08-12T16:20:00Z' as any,
-      endsAt: '2026-08-12T16:40:00Z' as any,
+      startsAt: '2026-08-12T16:20:00+09:00' as any,
+      endsAt: '2026-08-12T16:40:00+09:00' as any,
       type: 'Talk',
       description: 'Impact of AI on classroom dynamics and learning',
       speakers: ['Dr. Alice Pak'],
@@ -265,8 +234,8 @@ const run = async () => {
     {
       title: 'Go to Market: Building EdTech on Proof, Not Hope',
       slug: 'gesawards-gtm-fireside',
-      startsAt: '2026-08-12T16:40:00Z' as any,
-      endsAt: '2026-08-12T17:00:00Z' as any,
+      startsAt: '2026-08-12T16:40:00+09:00' as any,
+      endsAt: '2026-08-12T17:00:00+09:00' as any,
       type: 'Panel',
       description: 'Fireside chat on go-to-market strategy for EdTech',
       speakers: ['Michael Forshaw', 'Alex NG'],
@@ -327,8 +296,8 @@ const run = async () => {
     {
       title: 'Registration and Networking',
       slug: 'mindcet-registration',
-      startsAt: '2026-08-13T10:00:00Z' as any,
-      endsAt: '2026-08-13T10:20:00Z' as any,
+      startsAt: '2026-08-13T10:00:00+09:00' as any,
+      endsAt: '2026-08-13T10:20:00+09:00' as any,
       type: 'Networking',
       description: 'Registration and informal networking',
       speakers: ['Erella Moshe'],
@@ -336,8 +305,8 @@ const run = async () => {
     {
       title: 'Unboxing Schools in an AI-Native World',
       slug: 'mindcet-unboxing',
-      startsAt: '2026-08-13T10:20:00Z' as any,
-      endsAt: '2026-08-13T10:45:00Z' as any,
+      startsAt: '2026-08-13T10:20:00+09:00' as any,
+      endsAt: '2026-08-13T10:45:00+09:00' as any,
       type: 'Talk',
       description: 'Reimagining education in the age of AI',
       speakers: ['Avi Warshavsky'],
@@ -345,8 +314,8 @@ const run = async () => {
     {
       title: 'Towards Sustainable Ecosystem: Trends in Japan',
       slug: 'mindcet-japan-trends',
-      startsAt: '2026-08-13T10:45:00Z' as any,
-      endsAt: '2026-08-13T11:10:00Z' as any,
+      startsAt: '2026-08-13T10:45:00+09:00' as any,
+      endsAt: '2026-08-13T11:10:00+09:00' as any,
       type: 'Talk',
       description: 'EdTech trends in Japan and investment opportunities',
       speakers: ['Norihisa Wada'],
@@ -354,8 +323,8 @@ const run = async () => {
     {
       title: 'Separating AI Hype from Measurable Classroom Impact',
       slug: 'mindcet-ai-impact',
-      startsAt: '2026-08-13T11:10:00Z' as any,
-      endsAt: '2026-08-13T11:35:00Z' as any,
+      startsAt: '2026-08-13T11:10:00+09:00' as any,
+      endsAt: '2026-08-13T11:35:00+09:00' as any,
       type: 'Talk',
       description: 'Evidence-based evaluation of AI in education',
       speakers: ['Michael Forshaw'],
@@ -363,8 +332,8 @@ const run = async () => {
     {
       title: 'How AI is Finally Re-shaping Education',
       slug: 'mindcet-ai-reshaping',
-      startsAt: '2026-08-13T11:35:00Z' as any,
-      endsAt: '2026-08-13T12:00:00Z' as any,
+      startsAt: '2026-08-13T11:35:00+09:00' as any,
+      endsAt: '2026-08-13T12:00:00+09:00' as any,
       type: 'Panel',
       description: 'Fireside chat on AI transforming education from Pre-K to Higher Ed',
       speakers: ['Dr. Alice Pak', 'Dr. Ilan Ben Yaakov'],
