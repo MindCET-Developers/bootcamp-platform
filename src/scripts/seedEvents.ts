@@ -271,7 +271,7 @@ const run = async () => {
       description: 'Fireside chat on go-to-market strategy for EdTech',
       speakers: ['Michael Forshaw', 'Alex NG'],
     },
-  ]
+  ] as const
 
   for (const sessionData of gesSessions) {
     const existing = await payload.find({
@@ -294,7 +294,7 @@ const run = async () => {
           title: sessionData.title,
           startsAt: sessionData.startsAt,
           endsAt: sessionData.endsAt,
-          type: sessionData.type,
+          type: sessionData.type as any,
           description: sessionData.description,
           speakers: sessionSpeakers,
         },
@@ -311,7 +311,7 @@ const run = async () => {
           slug: sessionData.slug,
           startsAt: sessionData.startsAt,
           endsAt: sessionData.endsAt,
-          type: sessionData.type,
+          type: sessionData.type as any,
           description: sessionData.description,
           speakers: sessionSpeakers,
           sessionState: 'scheduled',
@@ -369,7 +369,7 @@ const run = async () => {
       description: 'Fireside chat on AI transforming education from Pre-K to Higher Ed',
       speakers: ['Dr. Alice Pak', 'Dr. Ilan Ben Yaakov'],
     },
-  ]
+  ] as const
 
   for (const sessionData of mindcetSessions) {
     const existing = await payload.find({
@@ -392,7 +392,7 @@ const run = async () => {
           title: sessionData.title,
           startsAt: sessionData.startsAt,
           endsAt: sessionData.endsAt,
-          type: sessionData.type,
+          type: sessionData.type as any,
           description: sessionData.description,
           speakers: sessionSpeakers,
         },
@@ -409,7 +409,7 @@ const run = async () => {
           slug: sessionData.slug,
           startsAt: sessionData.startsAt,
           endsAt: sessionData.endsAt,
-          type: sessionData.type,
+          type: sessionData.type as any,
           description: sessionData.description,
           speakers: sessionSpeakers,
           sessionState: 'scheduled',
