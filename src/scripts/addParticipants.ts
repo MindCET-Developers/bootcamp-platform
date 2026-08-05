@@ -128,19 +128,22 @@ const run = async () => {
       },
     })
 
-    if (existing.docs[0]) {
-      await payload.update({
-        collection: 'participants',
-        id: existing.docs[0].id,
-        overrideAccess: true,
-        data,
-      })
-      payload.logger.info(`Updated participant "${speaker.name}" from speaker record`)
-      continue
-    }
+    // Log the stored document rather than the input, so the output is proof of
+    // what the directory will actually show.
+    const stored = existing.docs[0]
+      ? await payload.update({
+          collection: 'participants',
+          id: existing.docs[0].id,
+          overrideAccess: true,
+          data,
+        })
+      : await payload.create({ collection: 'participants', overrideAccess: true, data })
 
-    await payload.create({ collection: 'participants', overrideAccess: true, data })
-    payload.logger.info(`Added participant "${speaker.name}" from speaker record`)
+    payload.logger.info(
+      `${existing.docs[0] ? 'Updated' : 'Added'} "${stored.name}" — ${stored.role || '(no role)'} · ${
+        stored.organization || '(no org)'
+      } · ${stored.about ? 'bio set' : 'no bio'} · status ${stored.status}`,
+    )
   }
 
   process.exit(0)
