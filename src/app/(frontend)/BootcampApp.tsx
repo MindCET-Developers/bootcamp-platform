@@ -359,7 +359,6 @@ export function BootcampApp({ data }: { data: BootcampAppData }) {
                   </div>
                   <div className="now-time">
                     <b>{formatTime(currentSession.startsAt, data.event.timezone)}</b>
-                    <span>{currentSession.location}</span>
                   </div>
                 </button>
               </section>
